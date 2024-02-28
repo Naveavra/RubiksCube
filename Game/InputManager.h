@@ -17,7 +17,7 @@
 	void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	{
 		Game *scn = (Game*)glfwGetWindowUserPointer(window);
-		scn->MyTranslate(glm::vec3(0,0,xoffset),0);
+		scn->scrollEventHandler(xoffset, yoffset);
 		
 	}
 	
@@ -40,14 +40,38 @@
 				break;
 
 				case GLFW_KEY_UP:
-					scn->MoveCamera(0,scn->zTranslate,0.4f);
+					scn->arrowPressedEventHandler(-90.0f, glm::vec3(1, 0, 0));
 					break;
 				case GLFW_KEY_DOWN:
 					//scn->shapeTransformation(scn->xGlobalRotate,-5.f);
 					//cout<< "down: "<<endl;
-					scn->MoveCamera(0,scn->zTranslate,-0.4f);
+					//scn->MoveCamera(0,scn->zTranslate,-0.4f);
+					scn->arrowPressedEventHandler(90.0f, glm::vec3(1, 0, 0));
 					break;
-
+				case GLFW_KEY_LEFT:
+					scn->arrowPressedEventHandler(-90.0f, glm::vec3(0, 1, 0));
+					break;
+				case GLFW_KEY_RIGHT:
+					scn->arrowPressedEventHandler(90.0f, glm::vec3(0, 1, 0));
+					break;
+				case GLFW_KEY_R:
+					scn->keyPressedEventHandler(90.0f, glm::vec3(1, 0, 0), 'r');
+					break;
+				case GLFW_KEY_L:
+					scn->keyPressedEventHandler(-90.0f, glm::vec3(1, 0, 0), 'l');
+					break;
+				case GLFW_KEY_U:
+					scn->keyPressedEventHandler(90.0f, glm::vec3(0, 1, 0), 'u');
+					break;
+				case GLFW_KEY_D:
+					scn->keyPressedEventHandler(-90.0f, glm::vec3(0, 1, 0), 'd');
+					break;
+				case GLFW_KEY_B:
+					scn->keyPressedEventHandler(-90.0f, glm::vec3(0, 0, 1), 'b');
+					break;
+				case GLFW_KEY_F:
+					scn->keyPressedEventHandler(90.0f, glm::vec3(0, 0, 1), 'f');
+					break;
 			default:
 				break;
 			}
