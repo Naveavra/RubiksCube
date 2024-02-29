@@ -27,7 +27,7 @@ glm::mat4 MovableGLM::MakeTrans(const glm::mat4 &prevTransformations) const
 
 glm::mat4 MovableGLM::MakeTrans() const
 {
-	return   trans * rot * scl ;
+	return   rot * trans * scl ;
 }
 
 glm::mat4 MovableGLM::getRot() {
