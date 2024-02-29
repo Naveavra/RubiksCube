@@ -1,7 +1,7 @@
 #pragma once   //maybe should be static class
 #include "display.h"
 #include "game.h"
-
+float currAngle = 90.0f;
 
 	void mouse_callback(GLFWwindow* window,int button, int action, int mods)
 	{	

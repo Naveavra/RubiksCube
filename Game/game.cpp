@@ -2,7 +2,7 @@
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 
-glm::vec3 transPosition;
+glm::vec3 axisToRotate;
 float angle = 0.0f;
 const int MAX_FRAMES = 1800;
 int framesForCubeRotation = MAX_FRAMES;
@@ -81,8 +81,7 @@ void Game::Update(const glm::mat4& MVP, const glm::mat4& Model, const int  shade
 	if (framesForCubeRotation < MAX_FRAMES) {
 		rotateCube();
 	}
-	if (framesForWallRotation < MAX_FRAMES)
-	{
+	if (framesForWallRotation < 1800) {
 		rotateWall();
 	}
 	s->Unbind();
@@ -90,13 +89,13 @@ void Game::Update(const glm::mat4& MVP, const glm::mat4& Model, const int  shade
 
 
 /// <summary>
-///  For each cube, it calculates the rotation axis. This is done by multiplying transPosition with the current rotation matrix of the cube (shapes[idx]->getRot()).
+///  For each cube, it calculates the rotation axis. This is done by multiplying axisToRotate with the current rotation matrix of the cube (shapes[idx]->getRot()).
 ///  This calculation determines the axis around which the cube will rotate.
 /// </summary>
 void Game::rotateCube()
 {
 	for (int idx = 0; idx < 27; idx++) {
-		glm::vec3 rotationAxis = transPosition * glm::mat3(shapes[idx]->getRot());
+		glm::vec3 rotationAxis = axisToRotate * glm::mat3(shapes[idx]->getRot());
 		shapes[idx]->MyRotate(angle, rotationAxis, 0);
 	}
 	framesForCubeRotation++;
@@ -106,26 +105,19 @@ void Game::rotateWall()
 {
 	for (int idx = 0; idx < 27; idx++) {
 		glm::mat4 transformationMatrix = shapes[idx]->MakeTrans(); //gets the tranformation matrix of each cube
-		RoundMatrixElements(transformationMatrix); //ensure that small floating-point inaccuracies don't affect the logic determining whether a cube should rotate
-
+		for (int a = 0; a < 4; a++)
+		{
+			for (int b = 0; b < 4; b++) {
+				transformationMatrix[a][b] = round(transformationMatrix[a][b]);
+			}
+		}
 		glm::vec3 shapePosition = glm::vec3(transformationMatrix[3][0], transformationMatrix[3][1], transformationMatrix[3][2]); //It is extracting the translation component of the transformation matrix.
 		if (ShouldRotateShape(shapePosition, cubesToRotate)) {
-			ApplyRotationToShape(shapes[idx], transPosition, angle);
+			ApplyRotationToShape(shapes[idx], axisToRotate, angle);
 		}
 	}
 	framesForWallRotation++;
 
-}
-
-glm::mat4 Game::RoundMatrixElements(const glm::mat4& matrix)
-{
-	glm::mat4 roundedMatrix;
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			roundedMatrix[i][j] = round(matrix[i][j]);
-		}
-	}
-	return roundedMatrix;
 }
 
 bool Game::ShouldRotateShape(const glm::vec3& position, const int cubesToRotate[3]) {
@@ -136,8 +128,8 @@ bool Game::ShouldRotateShape(const glm::vec3& position, const int cubesToRotate[
 	return checkX && checkY && checkZ;
 }
 
-void Game::ApplyRotationToShape(Shape* shape, const glm::vec3& transPosition, float angleCur) {
-	glm::vec3 rotationAxis = transPosition * glm::mat3(shape->getRot());
+void Game::ApplyRotationToShape(Shape* shape, const glm::vec3& axisToRotate, float angleCur) {
+	glm::vec3 rotationAxis = axisToRotate * glm::mat3(shape->getRot());
 	shape->MyRotate(angleCur, rotationAxis, 0);
 }
 
@@ -145,52 +137,53 @@ void Game::keyPressedEventHandler(float ang, glm::vec3 transPos, char key)
 {
 	if (framesForWallRotation == MAX_FRAMES && framesForCubeRotation == MAX_FRAMES) // ensuring sync between rotation 2000 is the frames number we chose
 	{
-		transPosition = transPos;
+		axisToRotate = transPos;
 		angle = ang / MAX_FRAMES;
 		framesForWallRotation = 0;
 		switch (key)
 		{
-		case 'r':
-			cubesToRotate[0] = 1;
-			cubesToRotate[1] = -2;
-			cubesToRotate[2] = -2;
-			break;
-		case 'l':
-			cubesToRotate[0] = -1;
-			cubesToRotate[1] = -2;
-			cubesToRotate[2] = -2;
-			break;
-		case 'u':
-			cubesToRotate[1] = 1;
-			cubesToRotate[0] = -2;
-			cubesToRotate[2] = -2;
-			break;
-		case 'd':
-			cubesToRotate[1] = -1;
-			cubesToRotate[0] = -2;
-			cubesToRotate[2] = -2;
-			break;
-		case 'b':
-			cubesToRotate[2] = -1;
-			cubesToRotate[0] = -2;
-			cubesToRotate[1] = -2;
-			break;
-		case 'f':
-			cubesToRotate[2] = 1;
-			cubesToRotate[0] = -2;
-			cubesToRotate[1] = -2;
-			break;
-		default:
-			break;
+			case 'r':
+				cubesToRotate[0] = 1;
+				cubesToRotate[1] = -2;
+				cubesToRotate[2] = -2;
+				break;
+			case 'l':
+				cubesToRotate[0] = -1;
+				cubesToRotate[1] = -2;
+				cubesToRotate[2] = -2;
+				break;
+			case 'u':
+				cubesToRotate[1] = 1;
+				cubesToRotate[0] = -2;
+				cubesToRotate[2] = -2;
+				break;
+			case 'd':
+				cubesToRotate[1] = -1;
+				cubesToRotate[0] = -2;
+				cubesToRotate[2] = -2;
+				break;
+			case 'b':
+				cubesToRotate[2] = -1;
+				cubesToRotate[0] = -2;
+				cubesToRotate[1] = -2;
+				break;
+			case 'f':
+				cubesToRotate[2] = 1;
+				cubesToRotate[0] = -2;
+				cubesToRotate[1] = -2;
+				break;
+			default:
+				break;
 		}
 	}
 }
+
 
 void Game::arrowPressedEventHandler(float ang, glm::vec3 transPos)
 {
 	if (framesForWallRotation == MAX_FRAMES && framesForCubeRotation == MAX_FRAMES) // ensuring sync between rotation 2000 is the frames number we chose
 	{
-		transPosition = transPos;
+		axisToRotate = transPos;
 		angle = ang / MAX_FRAMES;
 		framesForCubeRotation = 0;
 	}
