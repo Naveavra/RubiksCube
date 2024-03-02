@@ -4,7 +4,8 @@
 
 glm::vec3 axisToRotate;
 float angle = 0.0f;
-const int MAX_FRAMES = 1800;
+const int MAX_FRAMES = 2000;
+int numOfCubs = 27;
 int framesForCubeRotation = MAX_FRAMES;
 int framesForWallRotation = MAX_FRAMES;
 int cubesToRotate[] = { -2, -2, -2 };
@@ -94,7 +95,7 @@ void Game::Update(const glm::mat4& MVP, const glm::mat4& Model, const int  shade
 /// </summary>
 void Game::rotateCube()
 {
-	for (int idx = 0; idx < 27; idx++) {
+	for (int idx = 0; idx < numOfCubs; idx++) {
 		glm::vec3 rotationAxis = axisToRotate * glm::mat3(shapes[idx]->getRot());
 		shapes[idx]->MyRotate(angle, rotationAxis, 0);
 	}
@@ -103,7 +104,7 @@ void Game::rotateCube()
 
 void Game::rotateWall()
 {
-	for (int idx = 0; idx < 27; idx++) {
+	for (int idx = 0; idx < numOfCubs; idx++) {
 		glm::mat4 transformationMatrix = shapes[idx]->MakeTrans(); //gets the tranformation matrix of each cube
 		ronudMatValues(transformationMatrix);
 		glm::vec3 shapePosition = glm::vec3(transformationMatrix[3][0], transformationMatrix[3][1], transformationMatrix[3][2]); //It is extracting the translation component of the transformation matrix.
