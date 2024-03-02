@@ -81,7 +81,7 @@ void Game::Update(const glm::mat4& MVP, const glm::mat4& Model, const int  shade
 	if (framesForCubeRotation < MAX_FRAMES) {
 		rotateCube();
 	}
-	if (framesForWallRotation < 1800) {
+	if (framesForWallRotation < MAX_FRAMES) {
 		rotateWall();
 	}
 	s->Unbind();
@@ -105,12 +105,7 @@ void Game::rotateWall()
 {
 	for (int idx = 0; idx < 27; idx++) {
 		glm::mat4 transformationMatrix = shapes[idx]->MakeTrans(); //gets the tranformation matrix of each cube
-		for (int a = 0; a < 4; a++)
-		{
-			for (int b = 0; b < 4; b++) {
-				transformationMatrix[a][b] = round(transformationMatrix[a][b]);
-			}
-		}
+		ronudMatValues(transformationMatrix);
 		glm::vec3 shapePosition = glm::vec3(transformationMatrix[3][0], transformationMatrix[3][1], transformationMatrix[3][2]); //It is extracting the translation component of the transformation matrix.
 		if (ShouldRotateShape(shapePosition, cubesToRotate)) {
 			ApplyRotationToShape(shapes[idx], axisToRotate, angle);
@@ -118,6 +113,17 @@ void Game::rotateWall()
 	}
 	framesForWallRotation++;
 
+}
+
+void Game::ronudMatValues(glm::mat4& mat)
+{
+	for (int i = 0; i < mat.length(); i++) 
+	{
+		for (int j = 0; j < mat.length(); j++)
+		{
+			mat[i][j] = round(mat[i][j]);
+		}
+	}
 }
 
 bool Game::ShouldRotateShape(const glm::vec3& position, const int cubesToRotate[3]) {
@@ -140,40 +146,20 @@ void Game::keyPressedEventHandler(float ang, glm::vec3 transPos, char key)
 		axisToRotate = transPos;
 		angle = ang / MAX_FRAMES;
 		framesForWallRotation = 0;
-		switch (key)
-		{
-			case 'r':
-				cubesToRotate[0] = 1;
-				cubesToRotate[1] = -2;
-				cubesToRotate[2] = -2;
-				break;
-			case 'l':
-				cubesToRotate[0] = -1;
-				cubesToRotate[1] = -2;
-				cubesToRotate[2] = -2;
-				break;
-			case 'u':
-				cubesToRotate[1] = 1;
-				cubesToRotate[0] = -2;
-				cubesToRotate[2] = -2;
-				break;
-			case 'd':
-				cubesToRotate[1] = -1;
-				cubesToRotate[0] = -2;
-				cubesToRotate[2] = -2;
-				break;
-			case 'b':
-				cubesToRotate[2] = -1;
-				cubesToRotate[0] = -2;
-				cubesToRotate[1] = -2;
-				break;
-			case 'f':
-				cubesToRotate[2] = 1;
-				cubesToRotate[0] = -2;
-				cubesToRotate[1] = -2;
-				break;
-			default:
-				break;
+		std::unordered_map<char, glm::ivec3> keyMap = {
+			{'r', {1, -2, -2}},
+			{'l', {-1, -2, -2}},
+			{'u', {-2, 1, -2}},
+			{'d', {-2, -1, -2}},
+			{'b', {-2, -2, -1}},
+			{'f', {-2, -2, 1}}
+		};
+
+		auto pressedKey = keyMap.find(key);
+		if (pressedKey != keyMap.end()) {
+			cubesToRotate[0] = pressedKey->second.x;
+			cubesToRotate[1] = pressedKey->second.y;
+			cubesToRotate[2] = pressedKey->second.z;
 		}
 	}
 }

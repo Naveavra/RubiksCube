@@ -1,7 +1,10 @@
 #pragma once   //maybe should be static class
 #include "display.h"
 #include "game.h"
-float currAngle = 90.0f;
+float rotAngle = 90.0f;
+glm::vec3 x_axis = glm::vec3(1, 0, 0);
+glm::vec3 y_axis = glm::vec3(0, 1, 0);
+glm::vec3 z_axis = glm::vec3(0, 0, 1);
 
 	void mouse_callback(GLFWwindow* window,int button, int action, int mods)
 	{	
@@ -33,44 +36,46 @@ float currAngle = 90.0f;
 					glfwSetWindowShouldClose(window,GLFW_TRUE);
 				break;
 				case GLFW_KEY_SPACE:
-					if(scn->IsActive())
-						scn->Deactivate();
-					else
-						scn->Activate();
-				break;
-
+					rotAngle *= -1;
+					break;
 				case GLFW_KEY_UP:
-					scn->arrowPressedEventHandler(-90.0f, glm::vec3(1, 0, 0));
+					scn->arrowPressedEventHandler(( - 1 * rotAngle), x_axis);
 					break;
 				case GLFW_KEY_DOWN:
 					//scn->shapeTransformation(scn->xGlobalRotate,-5.f);
 					//cout<< "down: "<<endl;
 					//scn->MoveCamera(0,scn->zTranslate,-0.4f);
-					scn->arrowPressedEventHandler(90.0f, glm::vec3(1, 0, 0));
+					scn->arrowPressedEventHandler(rotAngle, x_axis);
 					break;
 				case GLFW_KEY_LEFT:
-					scn->arrowPressedEventHandler(-90.0f, glm::vec3(0, 1, 0));
+					scn->arrowPressedEventHandler((-1 * rotAngle), y_axis);
 					break;
 				case GLFW_KEY_RIGHT:
-					scn->arrowPressedEventHandler(90.0f, glm::vec3(0, 1, 0));
+					scn->arrowPressedEventHandler(rotAngle, y_axis);
 					break;
 				case GLFW_KEY_R:
-					scn->keyPressedEventHandler(90.0f, glm::vec3(1, 0, 0), 'r');
+					scn->keyPressedEventHandler(rotAngle, x_axis, 'r');
 					break;
 				case GLFW_KEY_L:
-					scn->keyPressedEventHandler(-90.0f, glm::vec3(1, 0, 0), 'l');
+					scn->keyPressedEventHandler(rotAngle, x_axis, 'l');
 					break;
 				case GLFW_KEY_U:
-					scn->keyPressedEventHandler(90.0f, glm::vec3(0, 1, 0), 'u');
+					scn->keyPressedEventHandler(rotAngle, y_axis, 'u');
 					break;
 				case GLFW_KEY_D:
-					scn->keyPressedEventHandler(-90.0f, glm::vec3(0, 1, 0), 'd');
+					scn->keyPressedEventHandler(rotAngle, y_axis, 'd');
 					break;
 				case GLFW_KEY_B:
-					scn->keyPressedEventHandler(-90.0f, glm::vec3(0, 0, 1), 'b');
+					scn->keyPressedEventHandler(rotAngle, z_axis, 'b');
 					break;
 				case GLFW_KEY_F:
-					scn->keyPressedEventHandler(90.0f, glm::vec3(0, 0, 1), 'f');
+					scn->keyPressedEventHandler(rotAngle, z_axis, 'f');
+					break;
+				case GLFW_KEY_Z:
+					rotAngle /= 2;
+					break;
+				case GLFW_KEY_A:
+					rotAngle = std::min((rotAngle * 2), 180.0f);
 					break;
 			default:
 				break;

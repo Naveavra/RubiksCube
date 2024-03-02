@@ -19,6 +19,7 @@ public:
 	void rotateWall();
 	bool ShouldRotateShape(const glm::vec3& position, const int cubeToRotate[3]);
 	void ApplyRotationToShape(Shape* shape, const glm::vec3& axisToRotate, float angle);
+	void ronudMatValues(glm::mat4& mat);
 	void keyPressedEventHandler(float angle, glm::vec3 transPos, char key);
 	~Game(void);
 };
