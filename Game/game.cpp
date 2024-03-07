@@ -8,7 +8,7 @@ const int MAX_FRAMES = 2000;
 int numOfCubs = 27;
 int framesForCubeRotation = MAX_FRAMES;
 int framesForWallRotation = MAX_FRAMES;
-int cubesToRotate[] = { -2, -2, -2 };
+int cubesToRotate[] = {0, 0, 0};
 
 static void printMat(const glm::mat4 mat)
 {
@@ -88,6 +88,10 @@ void Game::Update(const glm::mat4& MVP, const glm::mat4& Model, const int  shade
 	s->Unbind();
 }
 
+bool Game::readyForRotation()
+{
+	return framesForWallRotation == MAX_FRAMES && framesForCubeRotation == MAX_FRAMES;
+}
 
 /// <summary>
 ///  For each cube, it calculates the rotation axis. This is done by multiplying axisToRotate with the current rotation matrix of the cube (shapes[idx]->getRot()).
@@ -107,8 +111,8 @@ void Game::rotateWall()
 	for (int idx = 0; idx < numOfCubs; idx++) {
 		glm::mat4 transformationMatrix = shapes[idx]->MakeTrans(); //gets the tranformation matrix of each cube
 		ronudMatValues(transformationMatrix);
-		glm::vec3 shapePosition = glm::vec3(transformationMatrix[3][0], transformationMatrix[3][1], transformationMatrix[3][2]); //It is extracting the translation component of the transformation matrix.
-		if (ShouldRotateShape(shapePosition, cubesToRotate)) {
+		glm::vec3 translationVec = glm::vec3(transformationMatrix[3]); //It is extracting the translation component of the transformation matrix.
+		if (ShouldRotateShape(translationVec)) {
 			ApplyRotationToShape(shapes[idx], axisToRotate, angle);
 		}
 	}
@@ -127,10 +131,10 @@ void Game::ronudMatValues(glm::mat4& mat)
 	}
 }
 
-bool Game::ShouldRotateShape(const glm::vec3& position, const int cubesToRotate[3]) {
-	bool checkX = cubesToRotate[0] > -2 ? position.x == cubesToRotate[0] : true;
-	bool checkY = cubesToRotate[1] > -2 ? position.y == cubesToRotate[1] : true;
-	bool checkZ = cubesToRotate[2] > -2 ? position.z == cubesToRotate[2] : true;
+bool Game::ShouldRotateShape(const glm::vec3& position) {
+	bool checkX = cubesToRotate[0] != 0 ? position.x == cubesToRotate[0] : true;
+	bool checkY = cubesToRotate[1] != 0 ? position.y == cubesToRotate[1] : true;
+	bool checkZ = cubesToRotate[2] != 0 ? position.z == cubesToRotate[2] : true;
 
 	return checkX && checkY && checkZ;
 }
@@ -142,18 +146,18 @@ void Game::ApplyRotationToShape(Shape* shape, const glm::vec3& axisToRotate, flo
 
 void Game::keyPressedEventHandler(float ang, glm::vec3 transPos, char key)
 {
-	if (framesForWallRotation == MAX_FRAMES && framesForCubeRotation == MAX_FRAMES) // ensuring sync between rotation 2000 is the frames number we chose
+	if (readyForRotation()) // ensuring sync between rotation 2000 is the frames number we chose
 	{
 		axisToRotate = transPos;
 		angle = ang / MAX_FRAMES;
 		framesForWallRotation = 0;
 		std::unordered_map<char, glm::ivec3> keyMap = {
-			{'r', {1, -2, -2}},
-			{'l', {-1, -2, -2}},
-			{'u', {-2, 1, -2}},
-			{'d', {-2, -1, -2}},
-			{'b', {-2, -2, -1}},
-			{'f', {-2, -2, 1}}
+			{'r', {1, 0, 0}},
+			{'l', {-1, 0, 0}},
+			{'u', {0, 1, 0}},
+			{'d', {0, -1, 0}},
+			{'b', {0, 0, -1}},
+			{'f', {0, 0, 1}}
 		};
 
 		auto pressedKey = keyMap.find(key);
@@ -168,7 +172,7 @@ void Game::keyPressedEventHandler(float ang, glm::vec3 transPos, char key)
 
 void Game::arrowPressedEventHandler(float ang, glm::vec3 transPos)
 {
-	if (framesForWallRotation == MAX_FRAMES && framesForCubeRotation == MAX_FRAMES) // ensuring sync between rotation 2000 is the frames number we chose
+	if (readyForRotation()) // ensuring sync between rotation 2000 is the frames number we chose
 	{
 		axisToRotate = transPos;
 		angle = ang / MAX_FRAMES;

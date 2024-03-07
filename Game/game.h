@@ -17,9 +17,10 @@ public:
 	void scrollEventHandler(float xoffsset, float yoffset);
 	void rotateCube();
 	void rotateWall();
-	bool ShouldRotateShape(const glm::vec3& position, const int cubeToRotate[3]);
+	bool ShouldRotateShape(const glm::vec3& position);
 	void ApplyRotationToShape(Shape* shape, const glm::vec3& axisToRotate, float angle);
 	void ronudMatValues(glm::mat4& mat);
 	void keyPressedEventHandler(float angle, glm::vec3 transPos, char key);
+	bool readyForRotation();
 	~Game(void);
 };
