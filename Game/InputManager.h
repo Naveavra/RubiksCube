@@ -39,19 +39,19 @@ glm::vec3 z_axis = glm::vec3(0, 0, 1);
 					rotAngle *= -1;
 					break;
 				case GLFW_KEY_UP:
-					scn->arrowPressedEventHandler(( - 1 * rotAngle), x_axis);
+					scn->keyPressedEventHandler(( - 1 * rotAngle), x_axis, 'a');
 					break;
 				case GLFW_KEY_DOWN:
 					//scn->shapeTransformation(scn->xGlobalRotate,-5.f);
 					//cout<< "down: "<<endl;
 					//scn->MoveCamera(0,scn->zTranslate,-0.4f);
-					scn->arrowPressedEventHandler(rotAngle, x_axis);
+					scn->keyPressedEventHandler(rotAngle, x_axis, 'a');
 					break;
 				case GLFW_KEY_LEFT:
-					scn->arrowPressedEventHandler((-1 * rotAngle), y_axis);
+					scn->keyPressedEventHandler((-1 * rotAngle), y_axis, 'a');
 					break;
 				case GLFW_KEY_RIGHT:
-					scn->arrowPressedEventHandler(rotAngle, y_axis);
+					scn->keyPressedEventHandler(rotAngle, y_axis, 'a');
 					break;
 				case GLFW_KEY_R:
 					scn->keyPressedEventHandler(rotAngle, x_axis, 'r');

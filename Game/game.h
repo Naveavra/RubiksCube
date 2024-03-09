@@ -13,7 +13,6 @@ public:
 	void WhenRotate();
 	void WhenTranslate();
 	void Motion();
-	void arrowPressedEventHandler(float angle, glm::vec3 transPos);
 	void scrollEventHandler(float xoffsset, float yoffset);
 	void rotateCube();
 	void rotateWall();
@@ -21,6 +20,5 @@ public:
 	void ApplyRotationToShape(Shape* shape, const glm::vec3& axisToRotate, float angle);
 	void ronudMatValues(glm::mat4& mat);
 	void keyPressedEventHandler(float angle, glm::vec3 transPos, char key);
-	bool readyForRotation();
 	~Game(void);
 };
